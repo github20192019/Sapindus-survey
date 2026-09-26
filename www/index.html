@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>无患子种质资源野外调查</title>
+<style>
+:root{
+  --paper:#f4f6f0; --card:#ffffff; --ink:#15211a; --muted:#5b6a5e; --line:#d5dccf;
+  --leaf:#2d6a3c; --leaf-ink:#ffffff; --leaf-soft:#e2eee3;
+  --amber:#a86f06; --amber-soft:#fbefd2; --danger:#b3261e; --danger-soft:#fbe4e2;
+  --radius-s:8px; --radius-m:12px;
+  --font:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e1410; --card:#172019; --ink:#e7eee5; --muted:#9aaa9d; --line:#2c3a2f;
+    --leaf:#76bd88; --leaf-ink:#0e1410; --leaf-soft:#1e3325;
+    --amber:#e3ac40; --amber-soft:#3a2c10; --danger:#f2867e; --danger-soft:#3b1a18;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e1410; --card:#172019; --ink:#e7eee5; --muted:#9aaa9d; --line:#2c3a2f;
+  --leaf:#76bd88; --leaf-ink:#0e1410; --leaf-soft:#1e3325;
+  --amber:#e3ac40; --amber-soft:#3a2c10; --danger:#f2867e; --danger-soft:#3b1a18;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 120px)}
+body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding:0 14px 120px}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar-in{max-width:720px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:10px;min-height:56px}
+.bar h1{font-size:18px;font-weight:700;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar h1 small{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+.iconbtn{border:1px solid var(--line);background:var(--card);border-radius:var(--radius-s);height:40px;min-width:40px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:15px}
+.sync{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--leaf)} .dot.warn{background:var(--amber)}
+
+/* section tabs */
+.tabs{display:flex;gap:4px;max-width:720px;margin:0 auto;padding:0 14px 8px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 0 auto;border:0;background:transparent;padding:8px 10px;border-radius:var(--radius-s);color:var(--muted);font-size:15px;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper);font-weight:600}
+
+/* cards and fields */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-m);padding:14px;margin-top:14px}
+.card > h2{font-size:16px;margin:0 0 4px;font-weight:700}
+.card > .sub{font-size:13px;color:var(--muted);margin:0 0 6px}
+.field{padding:12px 0;border-top:1px solid var(--line)}
+.card > h2 + .field, .card > .sub + .field, .card > .field:first-child{border-top:0}
+.flabel{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:15px;font-weight:600;margin-bottom:8px}
+.flabel .clr{border:0;background:none;color:var(--muted);font-size:13px;font-weight:400;padding:0 2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;min-height:40px;font-size:15px;line-height:1.3}
+.chip[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:var(--leaf-ink);font-weight:600}
+.num{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:var(--radius-s);background:var(--card);max-width:260px}
+.num input{border:0;background:transparent;padding:9px 12px;font-size:17px;width:100%;min-width:0;outline:none}
+.num:focus-within{border-color:var(--leaf)}
+.num .u{padding:0 12px;color:var(--muted);font-size:14px;white-space:nowrap}
+.num.bad{border-color:var(--danger)}
+.txt,.area,.date{width:100%;border:1.5px solid var(--line);border-radius:var(--radius-s);background:var(--card);padding:9px 12px;font-size:16px;outline:none}
+.date{max-width:260px}
+.txt:focus,.area:focus,.date:focus{border-color:var(--leaf)}
+.area{min-height:110px;resize:vertical}
+.other{margin-top:8px}
+.hint{font-size:13px;color:var(--muted);margin-top:6px}
+.warn{font-size:13px;color:var(--danger);margin-top:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid2 .num{max-width:none}
+
+/* tree badges */
+.trees{position:sticky;top:calc(env(safe-area-inset-top,0px) + 106px);z-index:10;background:var(--paper);padding:10px 0 6px;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;align-items:center}
+.trees::-webkit-scrollbar{display:none}
+.tb{flex:0 0 auto;width:54px;height:54px;border-radius:50%;border:0;padding:4px;background:conic-gradient(var(--leaf) calc(var(--p,0)*1%), var(--line) 0);position:relative}
+.tb span{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;background:var(--card);font-weight:700;font-size:16px;line-height:1.05}
+.tb span i{font-style:normal;font-size:10px;font-weight:400;color:var(--muted)}
+.tb[aria-selected="true"] span{background:var(--ink);color:var(--paper)}
+.tb[aria-selected="true"] span i{color:var(--paper);opacity:.75}
+.tb.add span{background:transparent;border:1.5px dashed var(--muted);font-size:22px;font-weight:400;color:var(--muted)}
+.tb.add{background:none}
+.treeacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* buttons */
+.btn{border:1.5px solid var(--line);background:var(--card);border-radius:var(--radius-s);padding:10px 16px;font-size:15px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.primary{background:var(--leaf);border-color:var(--leaf);color:var(--leaf-ink);font-weight:600}
+.btn.amber{background:var(--amber-soft);border-color:var(--amber);color:var(--ink)}
+.btn.danger{color:var(--danger);border-color:var(--danger);background:var(--danger-soft)}
+.btn:disabled{opacity:.5;cursor:default}
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 18px);z-index:30;box-shadow:0 6px 18px rgba(0,0,0,.18);padding:12px 26px;font-size:17px;border-radius:999px}
+
+/* list */
+.search{margin-top:14px}
+.rec{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--radius-m);padding:12px 14px;margin-top:10px}
+.rec .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.rec .code{font-size:19px;font-weight:700;letter-spacing:.02em}
+.rec .code.none{color:var(--muted);font-weight:500}
+.rec .meta{font-size:13px;color:var(--muted);margin-top:3px}
+.rec .stats{display:flex;gap:14px;font-size:13px;margin-top:6px;color:var(--muted)}
+.rec .stats b{color:var(--ink);font-weight:600}
+.empty{text-align:center;color:var(--muted);padding:48px 20px}
+.empty p{margin:6px 0}
+.exports{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.exports .btn{flex:1 1 150px}
+.note{font-size:13px;color:var(--muted);background:var(--amber-soft);border-radius:var(--radius-s);padding:10px 12px;margin-top:14px}
+
+/* photos */
+.ph-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin-top:10px}
+.ph{position:relative;border-radius:var(--radius-s);overflow:hidden;background:var(--line);aspect-ratio:1}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph .cap{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:3px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph .x{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:16px;line-height:1}
+.phbar{display:flex;gap:8px;flex-wrap:wrap}
+.hidden-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+/* leaf obs */
+.obs{border:1px solid var(--line);border-radius:var(--radius-s);padding:10px 12px;margin-top:10px}
+.obs-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.obs-head .date{flex:1 1 150px}
+.obs-head select{border:1.5px solid var(--line);border-radius:var(--radius-s);background:var(--card);padding:9px 10px;font-size:15px}
+.obs .lbl{font-size:13px;color:var(--muted);margin:10px 0 6px}
+.check{display:flex;align-items:center;gap:10px;font-size:15px;padding:6px 0}
+.check input{width:22px;height:22px;accent-color:var(--leaf)}
+.pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--leaf-soft);color:var(--ink);margin-left:6px}
+.pill.off{background:var(--line);color:var(--muted)}
+
+/* modal & toast */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+.sheet{background:var(--card);border-radius:var(--radius-m);padding:18px;width:100%;max-width:440px;margin-bottom:env(safe-area-inset-bottom,0px)}
+.sheet p{margin:0 0 16px;font-size:16px}
+.sheet .row{display:flex;gap:10px;justify-content:flex-end}
+.sheet select{width:100%;border:1.5px solid var(--line);border-radius:var(--radius-s);background:var(--card);padding:10px;font-size:16px;margin-bottom:12px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 86px);z-index:60;background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;max-width:90vw;text-align:center;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+@media (max-width:380px){.chip{padding:6px 11px;font-size:14px}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="xlsx.full.min.js"></script>
+<script src="jszip.min.js"></script>
+<script>
+"use strict";
+/* ============ 性状定义（依据调查表取舍，选项依据《无患子调查性状描述》） ============ */
+const C = (k,l,o)=>({k,l,t:"c",o});
+const N = (k,l,u,int)=>({k,l,t:"n",u,int:!!int});
+const D = (k,l)=>({k,l,t:"d"});
+const T = (k,l,ph)=>({k,l,t:"t",ph});
+const RESIST = ["高抗","抗","中抗","感"];
+const TOLER = ["强","中","弱"];
+const GROUPS = [
+  {name:"枝叶性状", fields:[
+    C("shuzi","树姿",["直立","半张开","张开","下垂","其他"]),
+    C("youzhi","幼枝颜色",["绿色","黄绿色","黄色","黄褐色","其他"]),
+    C("qiushao","一年生秋梢通直性",["直","稍弯曲","近之字形弯曲","其他"]),
+    C("fuye","复叶类型",["偶数羽状复叶","奇数羽状复叶"]),
+    C("pailie","小叶排列方式",["互生","近对生","对生"]),
+    N("duishu","小叶对数","对",true),
+    C("yebing","复叶叶柄颜色",["绿色","红绿色","绿褐色","红褐色","黄绿色","黄色","其他"]),
+    C("yemian","叶面颜色",["浅绿色","绿色","深绿色","黄绿色","黄色","其他"]),
+    C("yexing","小叶形状",["披针形","卵状披针形","卵圆形","椭圆形","矩圆形","其他"]),
+    C("yejian","叶尖形状",["钝","急尖","渐尖","钝头渐尖","其他"]),
+    C("yeji","叶基形状",["圆钝形","楔形","阔楔形","偏斜","其他"]),
+    C("yeyuan","叶缘形状",["平","浅波状","波状","上卷"])
+  ]},
+  {name:"花期与产量", fields:[
+    C("kaifang","花开放次序",["雄花先放","雌花先放","雌雄同放"]),
+    N("huaxing","花性比例","%"),
+    C("huase","花瓣颜色",["黄白色","浅黄色","黄色","其他"]),
+    D("chuhua","初花期"),
+    D("shenghua","盛花期"),
+    D("mohua","末花期"),
+    D("chengshu","果实成熟期"),
+    T("zaoshi","早实性","如：定植后第几年结果"),
+    N("danzhu","单株产量","kg"),
+    N("danmian","单位面积产量","kg/亩")
+  ]},
+  {name:"果实与抗性", fields:[
+    C("guoxu","果序姿态",["直立","斜展","下垂"]),
+    C("jinmi","果序紧密度",["疏散","中等","紧密"]),
+    N("xuchang","果序长度","cm"),
+    N("xukuan","果序宽度","cm"),
+    N("xuguo","果序果数","个",true),
+    C("guoxing","果实形状",["扁圆形","近圆形","卵圆形","近椭圆形","其他"]),
+    C("guopi","果皮颜色",["黄绿色","黄色","金黄色","黄褐色","褐色","被锈斑","其他"]),
+    C("liuzhi","流汁情况",["无","轻度流汁","重度流汁"]),
+    C("naihan","耐寒性",TOLER),
+    C("naihan2","耐旱性",TOLER),
+    C("meiwu","煤污病抗性",RESIST),
+    C("tianniu","天牛抗性",RESIST),
+    C("yachong","蚜虫抗性",RESIST)
+  ]}
+];
+const TREE_FIELDS = GROUPS.flatMap(g=>g.fields);
+const GERM_TYPES = ["野生资源","地方品种","选育品种","品系","遗传材料","其他"];
+const LEAF_STAGE = ["绿","黄30%","黄50%","黄70%","黄"];
+const LEAF_COLOR = ["淡黄","黄","深黄","金黄","其它"];
+const PHOTO_TAGS = ["全株","树干","枝叶","花序","果序","果实","种子","彩叶","生境","其他"];
+
+/* ============ 工具 ============ */
+const $ = (s,el=document)=>el.querySelector(s);
+const esc = s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = ()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const today = ()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const isFilled = v=>v!==undefined && v!==null && v!=="";
+function toast(msg,ms=2200){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),ms)}
+function ask(msg,okText="确定",danger=false){
+  return new Promise(res=>{
+    const m=document.createElement("div");m.className="modal";
+    m.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><p>${esc(msg)}</p><div class="row"><button class="btn" data-a="0">取消</button><button class="btn ${danger?"danger":"primary"}" data-a="1">${esc(okText)}</button></div></div>`;
+    m.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b||e.target===m){m.remove();res(!!(b&&b.dataset.a==="1"))}});
+    document.body.appendChild(m);m.querySelector('[data-a="1"]').focus();
+  });
+}
+function pick(msg,options,cur){
+  return new Promise(res=>{
+    const m=document.createElement("div");m.className="modal";
+    m.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><p>${esc(msg)}</p><select>${options.map(o=>`<option value="${esc(o.v)}"${o.v===cur?" selected":""}>${esc(o.l)}</option>`).join("")}</select><div class="row"><button class="btn" data-a="0">取消</button><button class="btn primary" data-a="1">确定</button></div></div>`;
+    m.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b||e.target===m){const v=m.querySelector("select").value;m.remove();res(b&&b.dataset.a==="1"?v:null)}});
+    document.body.appendChild(m);
+  });
+}
+
+/* ============ 本机存储（IndexedDB） ============ */
+const IDB = {
+  db:null,
+  open(){return new Promise((res,rej)=>{
+    let r;try{r=indexedDB.open("sapindus-survey",1)}catch(e){return rej(e)}
+    r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("records"))d.createObjectStore("records",{keyPath:"id"});if(!d.objectStoreNames.contains("photos"))d.createObjectStore("photos",{keyPath:"pid"});if(!d.objectStoreNames.contains("kv"))d.createObjectStore("kv",{keyPath:"k"})};
+    r.onsuccess=()=>{this.db=r.result;res()};r.onerror=()=>rej(r.error);
+  })},
+  tx(store,mode,fn){return new Promise((res,rej)=>{
+    if(!this.db)return rej(new Error("no idb"));
+    const t=this.db.transaction(store,mode);const s=t.objectStore(store);let out;
+    const q=fn(s);if(q)q.onsuccess=()=>{out=q.result};
+    t.oncomplete=()=>res(out);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error);
+  })},
+  all(s){return this.tx(s,"readonly",st=>st.getAll())},
+  get(s,k){return this.tx(s,"readonly",st=>st.get(k))},
+  put(s,v){return this.tx(s,"readwrite",st=>st.put(v))},
+  del(s,k){return this.tx(s,"readwrite",st=>st.delete(k))}
+};
+let idbOK=true;
+const MEM={records:new Map(),photos:new Map(),kv:new Map()};
+async function sPut(s,v){if(idbOK){try{await IDB.put(s,v);return}catch(e){idbOK=false;toast("本机存储不可用，数据仅保存在当前页面")}}MEM[s].set(v.id||v.pid||v.k,v)}
+async function sDel(s,k){if(idbOK){try{await IDB.del(s,k);return}catch(e){idbOK=false}}MEM[s].delete(k)}
+async function sGet(s,k){if(idbOK){try{return await IDB.get(s,k)}catch(e){idbOK=false}}return MEM[s].get(k)}
+async function sAll(s){if(idbOK){try{return await IDB.all(s)}catch(e){idbOK=false}}return [...MEM[s].values()]}
+async function kvGet(k,d){const r=await sGet("kv",k);return r?r.v:d}
+async function kvSet(k,v){await sPut("kv",{k,v})}
+
+/* ============ 状态 ============ */
+const S = {records:[], view:"list", cur:null, sec:"base", tree:0, q:"", photoURLs:new Map()};
+function newRecord(){
+  const surveyor=localStorageGet("surveyor")||"";
+  return {id:uid(),createdAt:Date.now(),updatedAt:Date.now(),
+    meta:{date:today(),code:"",type:"",type_x:"",place:"",lat:"",lng:"",alt:"",acc:"",surveyor},
+    trees:[1,2,3,4,5].map(n=>({no:n,v:{},note:""})),
+    fruit:{xing:"",weight:""}, leaf:[], special:"", sampled:false, sampleNo:"", tracking:false, photos:[]};
+}
+function localStorageGet(k){try{return localStorage.getItem("sps_"+k)}catch(e){return null}}
+function localStorageSet(k,v){try{localStorage.setItem("sps_"+k,v)}catch(e){}}
+function treeProgress(t){const n=TREE_FIELDS.filter(f=>isFilled(t.v[f.k])).length;return Math.round(n/TREE_FIELDS.length*100)}
+
+let saveTimer=null;
+function touch(){
+  const r=S.cur;if(!r)return;r.updatedAt=Date.now();setSaved(false);
+  clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{await sPut("records",r);setSaved(true)},350);
+}
+async function flushSave(){if(saveTimer){clearTimeout(saveTimer);saveTimer=null;if(S.cur)await sPut("records",S.cur);setSaved(true)}}
+function setSaved(ok){const el=$("#sync");if(el)el.innerHTML=`<span class="dot ${ok?"ok":"warn"}"></span>${ok?"已保存":"保存中"}`}
+function renderSync(){setSaved(true)}
+
+/* ============ 原生文件（Capacitor Filesystem + Share） ============ */
+const isNative=()=>!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+function nativeCall(plugin,method,opts){
+  const C=window.Capacitor;
+  const p=C&&C.Plugins&&C.Plugins[plugin];
+  if(p&&typeof p[method]==="function")return p[method](opts);
+  if(C&&typeof C.nativePromise==="function")return C.nativePromise(plugin,method,opts);
+  return Promise.reject(new Error("原生接口不可用"));
+}
+function bytesToB64(u8){let s="";const step=0x8000;for(let i=0;i<u8.length;i+=step)s+=String.fromCharCode.apply(null,u8.subarray(i,i+step));return btoa(s)}
+async function nativeSave(name,blob){
+  const u8=new Uint8Array(await blob.arrayBuffer());
+  const CH=3*1024*512; // 1.5 MB，3 的倍数，保证分段 base64 可拼接
+  await nativeCall("Filesystem","writeFile",{path:name,data:bytesToB64(u8.subarray(0,CH)),directory:"CACHE"});
+  for(let i=CH;i<u8.length;i+=CH)await nativeCall("Filesystem","appendFile",{path:name,data:bytesToB64(u8.subarray(i,i+CH)),directory:"CACHE"});
+  const {uri}=await nativeCall("Filesystem","getUri",{path:name,directory:"CACHE"});
+  try{await nativeCall("Share","share",{title:name,url:uri,dialogTitle:"发送或保存 "+name})}
+  catch(e){if(!/cancel/i.test(String(e&&e.message||e)))throw e}
+}
+
+/* ============ 照片 ============ */
+async function compress(file){
+  const url=URL.createObjectURL(file);
+  try{
+    const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url});
+    const max=2000;let w=img.naturalWidth,h=img.naturalHeight;const s=Math.min(1,max/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);
+    const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);
+    return await new Promise(res=>c.toBlob(b=>res(b||file),"image/jpeg",0.85));
+  }finally{URL.revokeObjectURL(url)}
+}
+async function photoSrc(p){
+  if(S.photoURLs.has(p.pid))return S.photoURLs.get(p.pid);
+  const ph=await sGet("photos",p.pid);
+  if(ph&&ph.blob){const u=URL.createObjectURL(ph.blob);S.photoURLs.set(p.pid,u);return u}
+  return "";
+}
+async function photoBlob(p){const ph=await sGet("photos",p.pid);return ph&&ph.blob?ph.blob:null}
+function safeName(s){return String(s||"").replace(/[\\/:*?"<>|\s]+/g,"-")}
+function photoFileName(r,p,i){const code=safeName(r.meta.code)||"未编号";return `${code}_${p.tree?("株"+p.tree):"全份"}_${p.tag||"其他"}_${String(i+1).padStart(2,"0")}.jpg`}
+
+/* ============ 渲染：列表 ============ */
+function renderList(){
+  S.view="list";
+  const q=S.q.trim().toLowerCase();
+  const list=[...S.records].sort((a,b)=>b.updatedAt-a.updatedAt).filter(r=>!q||[r.meta.code,r.meta.place,r.meta.type,r.meta.surveyor].join(" ").toLowerCase().includes(q));
+  $("#app").innerHTML=`
+  <header class="bar"><div class="bar-in"><h1>无患子种质资源调查<small>野外鉴定评价　本机 ${S.records.length} 份记录</small></h1></div></header>
+  <main class="wrap">
+    ${S.records.length?`<input class="txt search" id="q" type="search" placeholder="搜索品系编号、地点、调查人" value="${esc(S.q)}">`:""}
+    ${list.map(r=>{
+      const nT=r.trees.length, filled=r.trees.filter(t=>treeProgress(t)>0).length;
+      return `<button class="rec" data-open="${r.id}">
+        <div class="top"><span class="code ${r.meta.code?"":"none"}">${esc(r.meta.code||"未填品系编号")}</span>${r.meta.surveyor?`<span class="pill">${esc(r.meta.surveyor)}</span>`:""}</div>
+        <div class="meta">${esc([r.meta.date,r.meta.type==="其他"?(r.meta.type_x||"其他"):r.meta.type,r.meta.place].filter(Boolean).join("　"))||"尚未填写基本信息"}</div>
+        <div class="stats"><span>已调查 <b>${filled}</b>/${nT} 株</span><span>照片 <b>${r.photos.length}</b></span>${r.leaf.length?`<span>彩叶观测 <b>${r.leaf.length}</b></span>`:""}${r.sampled?`<span><b>已采样</b></span>`:""}</div>
+      </button>`}).join("")}
+    ${!S.records.length?`<div class="empty"><p><b>还没有调查记录</b></p><p>点下方“新建调查”，每份种质一条记录，默认 5 个单株。</p><p>也可以导入同事发来的数据包。</p></div>`:""}
+    ${S.records.length&&!list.length?`<div class="empty"><p>没有匹配“${esc(S.q)}”的记录</p></div>`:""}
+    <section class="card"><h2>导出与汇总</h2>
+      <p class="sub">导出后可直接发到微信、QQ 或保存到手机文件夹。</p>
+      <div class="exports">
+        <button class="btn amber" id="xls" ${S.records.length?"":"disabled"}>导出 Excel</button>
+        <button class="btn" id="zip" ${S.records.length?"":"disabled"}>导出照片</button>
+      </div>
+      <p class="sub" style="margin-top:14px">多人调查时，各自导出“数据包”发给汇总人，汇总人导入后即可合并导出。数据包含全部记录和照片，也用于换手机和备份。</p>
+      <div class="exports">
+        <button class="btn" id="pack" ${S.records.length?"":"disabled"}>导出数据包</button>
+        <button class="btn" id="imp">导入数据包</button>
+      </div>
+      <input type="file" id="fimp" accept=".zip,application/zip,application/octet-stream" class="hidden-input" tabindex="-1">
+    </section>
+    <div class="note">数据保存在本机，无需联网。卸载 App 或清除 App 数据会删除全部记录，请定期导出数据包备份。</div>
+  </main>
+  <button class="btn primary fab" id="new">＋ 新建调查</button>`;
+  $("#new").onclick=async()=>{const r=newRecord();S.records.push(r);await sPut("records",r);openRecord(r.id)};
+  const qi=$("#q");if(qi)qi.oninput=e=>{S.q=e.target.value;const pos=e.target.selectionStart;renderList();const n=$("#q");n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}};
+  $("#app").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openRecord(b.dataset.open));
+  $("#xls").onclick=()=>busy(exportExcel);
+  $("#zip").onclick=()=>busy(exportPhotos);
+  $("#pack").onclick=()=>busy(exportPack);
+  $("#imp").onclick=()=>$("#fimp").click();
+  $("#fimp").onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)busy(()=>importPack(f))};
+}
+let busyNow=false;
+async function busy(fn){if(busyNow)return;busyNow=true;try{await fn()}catch(e){toast("操作失败："+(e&&e.message||e),4000)}finally{busyNow=false}}
+
+/* ============ 渲染：编辑 ============ */
+function openRecord(id){S.cur=S.records.find(r=>r.id===id);S.sec="base";S.tree=0;S.view="edit";try{history.pushState({rec:id},"")}catch(e){}renderEdit();window.scrollTo(0,0)}
+async function closeRecord(){await flushSave();S.cur=null;renderList();window.scrollTo(0,0)}
+window.addEventListener("popstate",()=>{if(document.querySelector(".modal")){document.querySelectorAll(".modal").forEach(m=>m.remove())}if(S.view==="edit")closeRecord()});
+const SECS=[["base","基本信息"],["tree","单株性状"],["fruit","果用与彩叶"],["photo","照片与备注"]];
+function renderEdit(){
+  const r=S.cur;
+  $("#app").innerHTML=`
+  <header class="bar"><div class="bar-in"><button class="iconbtn" id="back" aria-label="返回列表">‹ 列表</button><h1 id="ttl"></h1><div class="sync" id="sync"></div></div>
+  <nav class="tabs" role="tablist">${SECS.map(([k,l])=>`<button class="tab" role="tab" data-sec="${k}" aria-selected="${S.sec===k}">${l}</button>`).join("")}</nav></header>
+  <main class="wrap" id="sec"></main>`;
+  renderTitle();renderSync();
+  $("#back").onclick=()=>{if(history.state&&history.state.rec)history.back();else closeRecord()};
+  $("#app").querySelectorAll("[data-sec]").forEach(b=>b.onclick=()=>{S.sec=b.dataset.sec;$("#app").querySelectorAll("[data-sec]").forEach(x=>x.setAttribute("aria-selected",x===b));renderSec();window.scrollTo(0,0)});
+  renderSec();
+}
+function renderTitle(){const r=S.cur;$("#ttl").innerHTML=`${esc(r.meta.code||"未填品系编号")}<small>${esc(r.meta.date||"")}${r.meta.place?"　"+esc(r.meta.place):""}</small>`}
+
+function chipField(f,val,path,xval){
+  return `<div class="field" data-f="${path}"><div class="flabel"><span>${esc(f.l)}</span></div>
+    <div class="chips" role="group" aria-label="${esc(f.l)}">${f.o.map(o=>`<button type="button" class="chip" data-path="${path}" data-val="${esc(o)}" aria-pressed="${val===o}">${esc(o)}</button>`).join("")}</div>
+    ${f.o.some(o=>o==="其他"||o==="其它")?`<input class="txt other" data-path="${path}_x" placeholder="请注明" value="${esc(xval||"")}" ${val==="其他"||val==="其它"?"":"hidden"}>`:""}
+  </div>`;
+}
+function fieldHTML(f,obj,prefix){
+  const path=prefix+f.k, v=obj[f.k];
+  if(f.t==="c")return chipField(f,v,path,obj[f.k+"_x"]);
+  if(f.t==="n"){const bad=f.u==="%"&&isFilled(v)&&(+v>100||+v<0);
+    return `<div class="field"><div class="flabel"><span>${esc(f.l)}</span></div><label class="num${bad?" bad":""}"><input type="text" inputmode="${f.int?"numeric":"decimal"}" data-path="${path}" data-num="${f.int?"int":"dec"}" value="${esc(v??"")}" aria-label="${esc(f.l)}"><span class="u">${esc(f.u)}</span></label></div>`}
+  if(f.t==="d")return `<div class="field"><div class="flabel"><span>${esc(f.l)}</span>${isFilled(v)?`<button class="clr" data-clear="${path}">清除</button>`:""}</div><input class="date" type="date" data-path="${path}" value="${esc(v||"")}" aria-label="${esc(f.l)}"></div>`;
+  if(f.t==="t")return `<div class="field"><div class="flabel"><span>${esc(f.l)}</span></div><input class="txt" data-path="${path}" placeholder="${esc(f.ph||"")}" value="${esc(v||"")}" aria-label="${esc(f.l)}"></div>`;
+}
+
+function renderSec(){
+  const r=S.cur, el=$("#sec");
+  if(S.sec==="base"){
+    const dup=r.meta.code&&S.records.some(x=>x!==r&&x.meta.code.trim()===r.meta.code.trim());
+    el.innerHTML=`<section class="card">
+      <div class="field"><div class="flabel"><span>品系编号</span></div><input class="txt" data-path="m.code" value="${esc(r.meta.code)}" placeholder="如：LS-2026-001" autocapitalize="characters">
+        <div class="warn" id="dupw" ${dup?"":"hidden"}>已有另一条记录使用该编号</div></div>
+      <div class="field"><div class="flabel"><span>调查日期</span></div><input class="date" type="date" data-path="m.date" value="${esc(r.meta.date)}"></div>
+      ${chipField({l:"种质类型",o:GERM_TYPES},r.meta.type,"m.type",r.meta.type_x)}
+      <div class="field"><div class="flabel"><span>调查地点</span></div><input class="txt" data-path="m.place" value="${esc(r.meta.place)}" placeholder="省 市 县 乡镇 村 小地名"></div>
+      <div class="field"><div class="flabel"><span>位置</span></div>
+        <div class="grid2">
+          <label class="num"><input type="text" inputmode="decimal" data-path="m.lat" data-num="dec" value="${esc(r.meta.lat)}" aria-label="纬度"><span class="u">纬度</span></label>
+          <label class="num"><input type="text" inputmode="decimal" data-path="m.lng" data-num="dec" value="${esc(r.meta.lng)}" aria-label="经度"><span class="u">经度</span></label>
+          <label class="num"><input type="text" inputmode="decimal" data-path="m.alt" data-num="dec" value="${esc(r.meta.alt)}" aria-label="海拔"><span class="u">海拔 m</span></label>
+        </div>
+        <button class="btn" id="gps" style="margin-top:10px">获取定位</button>
+        <div class="hint" id="gpsh">${r.meta.acc?`定位精度约 ${esc(r.meta.acc)} m`:"点“获取定位”自动填写；没有信号时手动输入。"}</div></div>
+      <div class="field"><div class="flabel"><span>调查人</span></div><input class="txt" data-path="m.surveyor" value="${esc(r.meta.surveyor)}" placeholder="姓名"></div>
+    </section>
+    <section class="card"><h2>单株数量</h2><p class="sub">当前 ${r.trees.length} 株，可在“单株性状”里增减。</p>
+      <button class="btn primary" data-go="tree">开始调查单株</button></section>
+    <div style="margin-top:28px"><button class="btn danger" id="delrec">删除这条记录</button></div>`;
+    $("#gps").onclick=getGPS;
+    $("#delrec").onclick=deleteRecord;
+  }
+  else if(S.sec==="tree"){
+    if(S.tree>=r.trees.length)S.tree=r.trees.length-1;
+    const t=r.trees[S.tree], pre="t."+S.tree+".";
+    el.innerHTML=`<div class="trees" role="tablist" aria-label="单株">
+      ${r.trees.map((x,i)=>`<button class="tb" role="tab" data-tree="${i}" aria-selected="${i===S.tree}" style="--p:${treeProgress(x)}" aria-label="第${x.no}株，已填${treeProgress(x)}%"><span>${x.no}<i>株</i></span></button>`).join("")}
+      <button class="tb add" id="addtree" aria-label="增加一株"><span>＋</span></button></div>
+    ${GROUPS.map(g=>`<section class="card"><h2>${g.name}</h2>${g.fields.map(f=>fieldHTML(f,t.v,pre)).join("")}</section>`).join("")}
+    <section class="card"><h2>本株备注</h2><textarea class="area" data-path="${pre}note" placeholder="树龄、胸径、生长状况等">${esc(t.note||"")}</textarea></section>
+    <div class="treeacts">
+      ${S.tree>0?`<button class="btn" id="copyprev">沿用第${r.trees[S.tree-1].no}株的选项</button>`:""}
+      ${S.tree<r.trees.length-1?`<button class="btn primary" id="nexttree">下一株</button>`:""}
+      ${r.trees.length>1?`<button class="btn danger" id="deltree">删除第${t.no}株</button>`:""}
+    </div>`;
+    el.querySelectorAll("[data-tree]").forEach(b=>b.onclick=()=>{S.tree=+b.dataset.tree;renderSec();window.scrollTo(0,0)});
+    $("#addtree").onclick=()=>{const no=Math.max(0,...r.trees.map(x=>x.no))+1;r.trees.push({no,v:{},note:""});S.tree=r.trees.length-1;touch();renderSec();window.scrollTo(0,0);toast(`已增加第${no}株`)};
+    const cp=$("#copyprev");if(cp)cp.onclick=async()=>{
+      const prev=r.trees[S.tree-1];
+      if(TREE_FIELDS.some(f=>f.t!=="n"&&isFilled(t.v[f.k]))&&!(await ask("本株已有部分选项，沿用会覆盖这些选项，数值性状不受影响。继续吗？","覆盖")))return;
+      TREE_FIELDS.forEach(f=>{if(f.t==="c"||f.t==="d"||f.t==="t"){if(isFilled(prev.v[f.k]))t.v[f.k]=prev.v[f.k];if(isFilled(prev.v[f.k+"_x"]))t.v[f.k+"_x"]=prev.v[f.k+"_x"]}});
+      touch();renderSec();toast(`已沿用第${prev.no}株的选项、日期和文字，数值请逐株测量`)};
+    const nx=$("#nexttree");if(nx)nx.onclick=()=>{S.tree++;renderSec();window.scrollTo(0,0)};
+    const dt=$("#deltree");if(dt)dt.onclick=async()=>{if(!(await ask(`删除第${t.no}株及其全部数据？该株的照片会改为“全份”。`,"删除",true)))return;
+      r.photos.forEach(p=>{if(p.tree===t.no)p.tree=0});r.leaf.forEach(o=>{if(o.tree===t.no)o.tree=0});
+      r.trees.splice(S.tree,1);S.tree=Math.max(0,S.tree-1);touch();renderSec()};
+  }
+  else if(S.sec==="fruit"){
+    const w=parseFloat(r.fruit.weight);
+    el.innerHTML=`<section class="card"><h2>果用指标</h2>
+      <div class="field"><div class="flabel"><span>果型</span></div><input class="txt" data-path="f.xing" value="${esc(r.fruit.xing)}" placeholder="果型描述"></div>
+      <div class="field"><div class="flabel"><span>单果重</span></div><label class="num"><input type="text" inputmode="decimal" data-path="f.weight" data-num="dec" value="${esc(r.fruit.weight)}" aria-label="单果重"><span class="u">g</span></label>
+        <div class="hint" id="wflag">${wFlag(w)}</div></div>
+    </section>
+    <section class="card"><h2>彩叶指标</h2><p class="sub">每次观测记一行，可跟踪多次。</p>
+      <div id="obs">${r.leaf.map((o,i)=>obsHTML(o,i)).join("")}</div>
+      <button class="btn" id="addobs" style="margin-top:12px">＋ 添加一次观测</button>
+    </section>`;
+    $("#addobs").onclick=()=>{r.leaf.push({id:uid(),date:today(),tree:0,stage:"",color:"",color_x:""});touch();renderSec()};
+    el.querySelectorAll("[data-delobs]").forEach(b=>b.onclick=async()=>{if(await ask("删除这次彩叶观测？","删除",true)){r.leaf.splice(+b.dataset.delobs,1);touch();renderSec()}});
+  }
+  else if(S.sec==="photo"){
+    el.innerHTML=`<section class="card"><h2>性状照片</h2><p class="sub">拍照后选择株号和部位，导出时按“编号_株号_部位”命名。</p>
+      <div class="phbar"><button class="btn primary" id="cam">拍照</button><button class="btn" id="gal">从相册选</button></div>
+      <input type="file" accept="image/*" capture="environment" id="fcam" class="hidden-input" tabindex="-1">
+      <input type="file" accept="image/*" multiple id="fgal" class="hidden-input" tabindex="-1">
+      <div class="ph-grid" id="phg"></div></section>
+    <section class="card"><h2>其它优特异性状描述</h2><textarea class="area" data-path="r.special" placeholder="记录突出的优良或特异性状">${esc(r.special)}</textarea></section>
+    <section class="card"><h2>后续工作</h2>
+      <label class="check"><input type="checkbox" data-path="r.sampled" ${r.sampled?"checked":""}>已采样，需室内检测</label>
+      <div id="smp" ${r.sampled?"":"hidden"}><input class="txt" data-path="r.sampleNo" value="${esc(r.sampleNo)}" placeholder="样品编号"></div>
+      <label class="check"><input type="checkbox" data-path="r.tracking" ${r.tracking?"checked":""}>列入跟踪观测</label>
+    </section>`;
+    $("#cam").onclick=()=>$("#fcam").click();
+    $("#gal").onclick=()=>$("#fgal").click();
+    $("#fcam").onchange=e=>addPhotos(e.target.files,e.target);
+    $("#fgal").onchange=e=>addPhotos(e.target.files,e.target);
+    renderPhotos();
+  }
+  el.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{S.sec=b.dataset.go;renderEdit();window.scrollTo(0,0)});
+}
+function wFlag(w){if(!isFinite(w))return "填写后自动判断是否达到 5 g、7 g";return `单果重≥5 g：<b>${w>=5?"是":"否"}</b>　单果重≥7 g：<b>${w>=7?"是":"否"}</b>`}
+function treeOptions(sel){const r=S.cur;return `<option value="0"${!sel?" selected":""}>全份</option>`+r.trees.map(t=>`<option value="${t.no}"${sel===t.no?" selected":""}>第${t.no}株</option>`).join("")}
+function obsHTML(o,i){
+  const p="l."+i+".";
+  return `<div class="obs"><div class="obs-head">
+    <input class="date" type="date" data-path="${p}date" value="${esc(o.date)}" aria-label="观测日期">
+    <select data-path="${p}tree" aria-label="株号">${treeOptions(o.tree)}</select>
+    <button class="clr" data-delobs="${i}" style="border:0;background:none;color:var(--danger)">删除</button></div>
+    <div class="lbl">变色程度</div><div class="chips">${LEAF_STAGE.map(s=>`<button type="button" class="chip" data-path="${p}stage" data-val="${esc(s)}" aria-pressed="${o.stage===s}">${esc(s)}</button>`).join("")}</div>
+    <div class="lbl">叶色</div><div class="chips">${LEAF_COLOR.map(s=>`<button type="button" class="chip" data-path="${p}color" data-val="${esc(s)}" aria-pressed="${o.color===s}">${esc(s)}</button>`).join("")}</div>
+    <input class="txt other" data-path="${p}color_x" placeholder="请注明" value="${esc(o.color_x||"")}" ${o.color==="其它"?"":"hidden"}>
+  </div>`;
+}
+async function renderPhotos(){
+  const r=S.cur,g=$("#phg");if(!g)return;
+  if(!r.photos.length){g.innerHTML="";return}
+  const srcs=await Promise.all(r.photos.map(photoSrc));
+  if(!$("#phg"))return;
+  g.innerHTML=r.photos.map((p,i)=>`<div class="ph"><img src="${esc(srcs[i])}" alt="${esc((p.tree?"第"+p.tree+"株":"全份")+p.tag)}" data-edit="${i}"><div class="cap">${esc((p.tree?p.tree+"株 ":"全份 ")+p.tag)}</div><button class="x" data-delph="${i}" aria-label="删除照片">×</button></div>`).join("");
+  g.querySelectorAll("[data-delph]").forEach(b=>b.onclick=async()=>{
+    if(!(await ask("删除这张照片？","删除",true)))return;
+    const p=r.photos.splice(+b.dataset.delph,1)[0];await sDel("photos",p.pid);
+    touch();renderPhotos()});
+  g.querySelectorAll("[data-edit]").forEach(im=>im.onclick=()=>tagPhoto(r.photos[+im.dataset.edit]));
+}
+async function tagPhoto(p){
+  const r=S.cur;
+  const tree=await pick("这张照片属于",[{v:"0",l:"全份"},...r.trees.map(t=>({v:String(t.no),l:"第"+t.no+"株"}))],String(p.tree||0));
+  if(tree===null)return;
+  const tag=await pick("拍摄部位",PHOTO_TAGS.map(t=>({v:t,l:t})),p.tag);
+  if(tag===null)return;
+  p.tree=+tree;p.tag=tag;touch();renderPhotos();
+}
+async function addPhotos(files,input){
+  const r=S.cur;if(!files||!files.length)return;
+  const defTree=r.trees[S.tree]?r.trees[S.tree].no:0;
+  const tree=await pick(`${files.length}张照片属于`,[{v:"0",l:"全份"},...r.trees.map(t=>({v:String(t.no),l:"第"+t.no+"株"}))],String(defTree));
+  if(tree===null){input.value="";return}
+  const tag=await pick("拍摄部位",PHOTO_TAGS.map(t=>({v:t,l:t})),"果序");
+  if(tag===null){input.value="";return}
+  toast("正在保存照片…",4000);
+  for(const f of files){
+    try{const blob=await compress(f);const pid=uid();await sPut("photos",{pid,rid:r.id,blob});r.photos.push({pid,tree:+tree,tag,ts:Date.now()})}
+    catch(e){toast("有照片无法读取，已跳过")}
+  }
+  input.value="";touch();renderPhotos();toast(`已保存${files.length}张照片`);
+}
+
+/* ============ 输入处理（事件委托） ============ */
+function setPath(path,val){
+  const r=S.cur;const seg=path.split(".");
+  if(seg[0]==="m"){r.meta[seg[1]]=val;if(seg[1]==="surveyor")localStorageSet("surveyor",val)}
+  else if(seg[0]==="t"){const t=r.trees[+seg[1]];if(seg[2]==="note")t.note=val;else t.v[seg[2]]=val}
+  else if(seg[0]==="f")r.fruit[seg[1]]=val;
+  else if(seg[0]==="l"){const o=r.leaf[+seg[1]];o[seg[2]]=seg[2]==="tree"?+val:val}
+  else if(seg[0]==="r")r[seg[1]]=val;
+  touch();
+}
+function getPath(path){
+  const r=S.cur;const seg=path.split(".");
+  if(seg[0]==="m")return r.meta[seg[1]];
+  if(seg[0]==="t")return r.trees[+seg[1]].v[seg[2]];
+  if(seg[0]==="f")return r.fruit[seg[1]];
+  if(seg[0]==="l")return r.leaf[+seg[1]][seg[2]];
+  if(seg[0]==="r")return r[seg[1]];
+}
+function updateTreeBadge(){
+  if(S.sec!=="tree")return;const b=document.querySelector(`[data-tree="${S.tree}"]`);if(!b)return;
+  const t=S.cur.trees[S.tree];const p=treeProgress(t);b.style.setProperty("--p",p);b.setAttribute("aria-label",`第${t.no}株，已填${p}%`);
+}
+document.addEventListener("click",e=>{
+  const c=e.target.closest(".chip[data-path]");
+  if(c&&S.cur){
+    const path=c.dataset.path,val=c.dataset.val;const cur=getPath(path);
+    const nv=cur===val?"":val;setPath(path,nv);
+    c.parentElement.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x.dataset.val===nv));
+    const ox=c.closest(".field,.obs")?.querySelector(`[data-path="${path}_x"]`);
+    if(ox){ox.hidden=!(nv==="其他"||nv==="其它");if(!ox.hidden)ox.focus()}
+    if(path==="m.type")renderTitle();
+    updateTreeBadge();return;
+  }
+  const cl=e.target.closest("[data-clear]");
+  if(cl&&S.cur){setPath(cl.dataset.clear,"");const inp=document.querySelector(`[data-path="${cl.dataset.clear}"]`);if(inp)inp.value="";cl.remove();updateTreeBadge()}
+});
+document.addEventListener("input",e=>{
+  const el=e.target;if(!S.cur||!el.dataset||!el.dataset.path||el.classList.contains("chip"))return;
+  const path=el.dataset.path;
+  if(el.type==="checkbox"){setPath(path,el.checked);if(path==="r.sampled"){const s=$("#smp");if(s)s.hidden=!el.checked}return}
+  let v=el.value;
+  if(el.dataset.num){
+    v=v.replace(/[，。]/g,".").replace(el.dataset.num==="int"?/[^\d]/g:/[^\d.\-]/g,"");
+    if(v!==el.value)el.value=v;
+    const wrap=el.closest(".num");
+    if(wrap&&wrap.querySelector(".u")?.textContent==="%")wrap.classList.toggle("bad",v!==""&&(+v>100||+v<0));
+  }
+  setPath(path,v);
+  if(path==="m.code"||path==="m.date"||path==="m.place")renderTitle();
+  if(path==="m.code"){const w=$("#dupw");if(w)w.hidden=!(v.trim()&&S.records.some(x=>x!==S.cur&&x.meta.code.trim()===v.trim()))}
+  if(path==="f.weight"){const w=$("#wflag");if(w)w.innerHTML=wFlag(parseFloat(v))}
+  if(el.type==="date"&&el.closest(".field")){const fl=el.closest(".field").querySelector(".flabel");if(v&&!fl.querySelector(".clr")){fl.insertAdjacentHTML("beforeend",`<button class="clr" data-clear="${path}">清除</button>`)}}
+  updateTreeBadge();
+});
+document.addEventListener("change",e=>{const el=e.target;if(el.tagName==="SELECT"&&el.dataset.path&&S.cur)setPath(el.dataset.path,el.value)});
+
+/* ============ 定位 ============ */
+function getGPS(){
+  const h=$("#gpsh");
+  if(!navigator.geolocation){h.textContent="此设备不支持定位，请手动输入。";return}
+  h.textContent="正在定位…";
+  navigator.geolocation.getCurrentPosition(p=>{
+    const c=p.coords,r=S.cur;
+    r.meta.lat=c.latitude.toFixed(6);r.meta.lng=c.longitude.toFixed(6);
+    if(c.altitude!=null)r.meta.alt=Math.round(c.altitude)+"";
+    r.meta.acc=Math.round(c.accuracy)+"";touch();
+    if(S.sec==="base")renderSec();
+    toast("已获取定位");
+  },err=>{h.textContent=err.code===1?"定位权限被拒绝，请在浏览器设置中允许，或手动输入。":"暂时无法定位，请稍后重试或手动输入。"},{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+}
+
+/* ============ 删除记录 ============ */
+async function deleteRecord(){
+  const r=S.cur;
+  if(!(await ask(`删除“${r.meta.code||"未填品系编号"}”整条记录及${r.photos.length}张照片？此操作不可恢复。`,"删除",true)))return;
+  for(const p of r.photos)await sDel("photos",p.pid);
+  await sDel("records",r.id);
+  const del=await kvGet("deleted",{});del[r.id]=Date.now();await kvSet("deleted",del);
+  S.records=S.records.filter(x=>x!==r);
+  S.cur=null;
+  if(history.state&&history.state.rec){S.view="list";history.back()}
+  renderList();toast("已删除");
+}
+
+/* ============ 导出 ============ */
+function optText(v,x){if(!isFilled(v))return "";return (v==="其他"||v==="其它")&&x?`${v}：${x}`:v}
+function numOrText(v){if(!isFilled(v))return "";const n=Number(v);return isFinite(n)?n:v}
+function colHead(f){return f.t==="n"?`${f.l}（${f.u}）`:f.l}
+async function saveFile(name,blob){
+  if(isNative()){toast("正在生成文件…",3000);await nativeSave(name,blob);return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
+}
+async function exportExcel(){
+  if(!window.XLSX){toast("导出组件缺失，请重新安装 App");return}
+  await flushSave();
+  const recs=[...S.records].sort((a,b)=>(a.meta.code||"").localeCompare(b.meta.code||"","zh")||a.createdAt-b.createdAt);
+  const base=r=>[r.meta.code,r.meta.date,optText(r.meta.type,r.meta.type_x),r.meta.place,numOrText(r.meta.lat),numOrText(r.meta.lng),numOrText(r.meta.alt),r.meta.surveyor];
+  const baseH=["品系编号","调查日期","种质类型","调查地点","纬度","经度","海拔（m）","调查人"];
+  const s1=[[...baseH,"株号",...TREE_FIELDS.map(colHead),"本株备注"]];
+  recs.forEach(r=>r.trees.forEach(t=>s1.push([...base(r),t.no,...TREE_FIELDS.map(f=>f.t==="c"?optText(t.v[f.k],t.v[f.k+"_x"]):f.t==="n"?numOrText(t.v[f.k]):(t.v[f.k]||"")),t.note||""])));
+  const s2=[["品系编号","调查日期","果型","单果重（g）","单果重≥5g","单果重≥7g","其它优特异性状描述","已采样","样品编号","跟踪观测","照片数"]];
+  recs.forEach(r=>{const w=parseFloat(r.fruit.weight);s2.push([r.meta.code,r.meta.date,r.fruit.xing,numOrText(r.fruit.weight),isFinite(w)?(w>=5?"是":"否"):"",isFinite(w)?(w>=7?"是":"否"):"",r.special,r.sampled?"是":"否",r.sampleNo,r.tracking?"是":"否",r.photos.length])});
+  const s3=[["品系编号","株号","观测日期","变色程度","叶色"]];
+  recs.forEach(r=>r.leaf.forEach(o=>s3.push([r.meta.code,o.tree?o.tree:"全份",o.date,o.stage,optText(o.color,o.color_x)])));
+  const s4=[["品系编号","株号","部位","文件名","拍摄时间"]];
+  recs.forEach(r=>r.photos.forEach((p,i)=>{const d=new Date(p.ts);s4.push([r.meta.code,p.tree?p.tree:"全份",p.tag,photoFileName(r,p,i),`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`])}));
+  const wb=XLSX.utils.book_new();
+  const add=(rows,name)=>{const ws=XLSX.utils.aoa_to_sheet(rows);ws["!cols"]=rows[0].map((h,i)=>({wch:Math.min(30,Math.max(String(h).length*2+2,...rows.slice(1).map(r=>String(r[i]??"").length*2)))}));XLSX.utils.book_append_sheet(wb,ws,name)};
+  add(s1,"单株性状");add(s2,"果用与其他");add(s3,"彩叶观测");add(s4,"照片清单");
+  const buf=XLSX.write(wb,{type:"array",bookType:"xlsx"});
+  await saveFile(`无患子种质资源调查_${today()}.xlsx`,new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+}
+async function exportPhotos(){
+  if(!window.JSZip){toast("导出组件缺失，请重新安装 App");return}
+  const n=S.records.reduce((a,r)=>a+r.photos.length,0);
+  if(!n){toast("还没有照片");return}
+  toast("正在打包照片…",6000);
+  const zip=new JSZip();let miss=0;
+  for(const r of S.records){
+    const folder=zip.folder(safeName(r.meta.code)||("未编号_"+r.id.slice(-4)));
+    for(let i=0;i<r.photos.length;i++){const b=await photoBlob(r.photos[i]);if(b)folder.file(photoFileName(r,r.photos[i],i),b);else miss++}
+  }
+  const blob=await zip.generateAsync({type:"blob",compression:"STORE"});
+  await saveFile(`无患子调查照片_${today()}.zip`,blob);
+  if(miss)toast(`${miss}张照片在本机找不到，已跳过`,4000);
+}
+
+/* ============ 数据包（多人汇总、换机、备份） ============ */
+async function exportPack(){
+  await flushSave();
+  toast("正在打包数据…",6000);
+  const zip=new JSZip();
+  const deleted=await kvGet("deleted",{});
+  zip.file("data.json",JSON.stringify({app:"sapindus-survey",version:1,exportedAt:Date.now(),records:S.records,deleted}));
+  const pf=zip.folder("photos");let n=0;
+  for(const r of S.records)for(const p of r.photos){const b=await photoBlob(p);if(b){pf.file(p.pid+".jpg",b);n++}}
+  const blob=await zip.generateAsync({type:"blob",compression:"STORE"});
+  const who=safeName(localStorageGet("surveyor")||"");
+  await saveFile(`无患子数据包_${who?who+"_":""}${today()}.zip`,blob);
+}
+async function importPack(file){
+  toast("正在读取数据包…",6000);
+  let zip,data;
+  try{zip=await JSZip.loadAsync(file);data=JSON.parse(await zip.file("data.json").async("string"))}
+  catch(e){toast("这不是本 App 导出的数据包",4000);return}
+  if(!data||data.app!=="sapindus-survey"||!Array.isArray(data.records)){toast("这不是本 App 导出的数据包",4000);return}
+  const localDel=await kvGet("deleted",{});
+  let add=0,upd=0,same=0,rm=0;
+  for(const [id,at] of Object.entries(data.deleted||{})){
+    const loc=S.records.find(x=>x.id===id);
+    if(loc&&loc.updatedAt<=at){for(const p of loc.photos)await sDel("photos",p.pid);await sDel("records",id);S.records=S.records.filter(x=>x!==loc);rm++}
+    if(!localDel[id]||localDel[id]<at)localDel[id]=at;
+  }
+  for(const r of data.records){
+    if(!r||!r.id)continue;
+    if(localDel[r.id]&&localDel[r.id]>=r.updatedAt)continue;
+    r.leaf=r.leaf||[];r.photos=r.photos||[];r.fruit=r.fruit||{xing:"",weight:""};
+    const loc=S.records.find(x=>x.id===r.id);
+    if(loc&&loc.updatedAt>=r.updatedAt){same++;continue}
+    for(const p of r.photos){
+      if(await sGet("photos",p.pid))continue;
+      const f=zip.file("photos/"+p.pid+".jpg");
+      if(f){const b=await f.async("blob");await sPut("photos",{pid:p.pid,rid:r.id,blob:new Blob([b],{type:"image/jpeg"})})}
+    }
+    await sPut("records",r);
+    if(loc){S.records[S.records.indexOf(loc)]=r;upd++}else{S.records.push(r);add++}
+  }
+  await kvSet("deleted",localDel);
+  renderList();
+  toast(`导入完成：新增 ${add} 条，更新 ${upd} 条${same?`，${same} 条本机已是最新`:""}${rm?`，删除 ${rm} 条`:""}`,5000);
+}
+
+/* ============ 启动 ============ */
+(async function(){
+  try{await IDB.open()}catch(e){idbOK=false}
+  try{S.records=(await sAll("records"))||[]}catch(e){S.records=[]}
+  S.records.forEach(r=>{r.leaf=r.leaf||[];r.photos=r.photos||[];r.fruit=r.fruit||{xing:"",weight:""}});
+  renderList();
+  if(!idbOK)toast("本机存储不可用，关闭前请导出数据包",5000);
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+})();
+</script>
+</body>
+</html>
