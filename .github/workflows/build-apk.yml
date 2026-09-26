@@ -1,0 +1,59 @@
+name: 打包安卓 APK
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 生成 Android 工程
+        run: |
+          npx cap add android
+          node scripts/patch-android.js
+
+      - name: 生成图标
+        continue-on-error: true
+        run: npx @capacitor/assets generate --android
+
+      - name: 同步网页与插件
+        run: npx cap sync android
+
+      - name: 编译 APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../sapindus-survey-v${{ github.run_number }}.apk
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: sapindus-survey-apk
+          path: sapindus-survey-v${{ github.run_number }}.apk
+
+      - name: 发布到 Releases（便于团队直接下载）
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: 无患子调查 v${{ github.run_number }}
+          files: sapindus-survey-v${{ github.run_number }}.apk
