@@ -1,0 +1,8 @@
+{
+  "appId": "cn.risf.sapindus.survey",
+  "appName": "无患子调查",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  }
+}
